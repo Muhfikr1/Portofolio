@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Muhammad Ikhsanul Fikri Ramadhan — Portfolio</title>
+<meta name="description" content="Portfolio of Muhammad Ikhsanul Fikri Ramadhan, Sistem Informasi student at Universitas Negeri Semarang.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;700;800;900&display=swap">
+
+<link rel="stylesheet" href="dist/tailwind.css">
+
+<script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.3.13/dist/lenis.min.js"></script>
+
+<script type="importmap">
+{ "imports": { "three": "https://unpkg.com/three@0.183/build/three.module.js" } }
+</script>
+
+<style>
+:root {
+  --void-black: #050508;
+  --void-dark:  #0A0A0F;
+  --neon-pink:  #FF2D8F;
+  --neon-blue:  #00D4FF;
+  --neon-green: #00FF94;
+  --ease-quiet:    cubic-bezier(.22, 1, .36, 1);
+  --ease-precise:  cubic-bezier(.4, 0, .2, 1);
+  --ease-emphasis: cubic-bezier(.16, 1, .3, 1);
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--void-black);
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+section { scroll-margin-top: 6rem; }
+
+body, a, button { cursor: none; }
+#cursor-dot {
+  position: fixed; top: 0; left: 0;
+  width: 8px; height: 8px;
+  background: #fff; border-radius: 50%;
+  pointer-events: none; z-index: 9999;
+  mix-blend-mode: difference;
+  transition: width 0.25s var(--ease-precise), height 0.25s var(--ease-precise);
+  will-change: transform;
+}
+@media (pointer: coarse) {
+  body, a, button { cursor: auto; }
+  #cursor-dot { display: none; }
+}
+
+.grid-bg {
+  position: fixed; inset: 0; z-index: 1; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255, 45, 143, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 45, 143, 0.05) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+}
+.noise {
+  position: fixed; inset: 0; z-index: 2; pointer-events: none; opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+}
+#particle-canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+#hero-canvas { width: 100%; height: 100%; display: block; }
+
+.scramble-glow { text-shadow: 0 0 30px rgba(255, 45, 143, 0.35); }
+.eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem; font-weight: 500;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--neon-pink);
+}
+::selection { background: var(--neon-pink); color: var(--void-black); }
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--void-black); }
+::-webkit-scrollbar-thumb { background: rgba(255, 45, 143, 0.3); }
+::-webkit-scrollbar-thumb:hover { background: var(--neon-pink); }
+
+.nav-link { position: relative; color: rgba(255,255,255,0.6); transition: color 300ms var(--ease-quiet); }
+.nav-link:hover, .nav-link.active { color: #fff; }
+.nav-link::after {
+  content: ''; position: absolute; bottom: -6px; left: 0;
+  width: 0; height: 1px; background: var(--neon-pink);
+  transition: width 350ms var(--ease-quiet);
+}
+.nav-link:hover::after, .nav-link.active::after { width: 100%; }
+
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 0.6rem;
+  background: var(--neon-pink); color: var(--void-black);
+  font-family: 'JetBrains Mono', monospace; font-weight: 700;
+  font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase;
+  padding: 1rem 1.5rem; transition: all 300ms var(--ease-quiet);
+  border: 1px solid var(--neon-pink);
+}
+.btn-primary:hover {
+  background: transparent; color: var(--neon-pink);
+  box-shadow: 0 0 30px rgba(255, 45, 143, 0.3);
+}
+.btn-ghost {
+  display: inline-flex; align-items: center; gap: 0.6rem;
+  color: #fff; font-family: 'JetBrains Mono', monospace; font-weight: 700;
+  font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase;
+  padding: 1rem 1.5rem; border: 1px solid rgba(255,255,255,0.2);
+  transition: all 300ms var(--ease-quiet);
+}
+.btn-ghost:hover { border-color: var(--neon-pink); color: var(--neon-pink); }
+
+.frame {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: border-color 400ms var(--ease-quiet), box-shadow 400ms var(--ease-quiet);
+}
+.frame:hover {
+  border-color: var(--neon-pink);
+  box-shadow: 0 0 40px rgba(255, 45, 143, 0.15);
+}
+
+.reveal {
+  opacity: 0; transform: translateY(40px);
+  transition: opacity 900ms var(--ease-quiet), transform 900ms var(--ease-quiet);
+}
+.reveal.is-in { opacity: 1; transform: none; }
+
+.skill-card {
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(10, 10, 15, 0.4);
+  padding: 1.5rem; transition: all 400ms var(--ease-quiet);
+  overflow: hidden;
+}
+.skill-card::before {
+  content: ''; position: absolute; top: 0; left: 0;
+  width: 0; height: 1px; background: var(--neon-pink);
+  transition: width 500ms var(--ease-quiet);
+}
+.skill-card::after {
+  content: ''; position: absolute; bottom: 0; right: 0;
+  width: 0; height: 1px; background: var(--neon-pink);
+  transition: width 500ms var(--ease-quiet) 100ms;
+}
+.skill-card:hover { border-color: var(--neon-pink); transform: translateY(-4px); }
+.skill-card:hover::before, .skill-card:hover::after { width: 100%; }
+.skill-card iconify-icon { transition: transform 400ms var(--ease-quiet), color 400ms var(--ease-quiet); }
+.skill-card:hover iconify-icon { transform: scale(1.1); color: var(--neon-pink); }
+
+.timeline-item { position: relative; padding-left: 3rem; padding-bottom: 3rem; }
+.timeline-dot {
+  position: absolute; left: 0; top: 0.4rem;
+  width: 12px; height: 12px; border-radius: 50%;
+  background: var(--void-black); border: 2px solid var(--neon-pink);
+  z-index: 10; transition: all 350ms var(--ease-quiet);
+}
+.timeline-item:hover .timeline-dot {
+  background: var(--neon-pink); transform: scale(1.4);
+  box-shadow: 0 0 20px var(--neon-pink);
+}
+.timeline-item:hover .timeline-year { letter-spacing: 0.3em; }
+.timeline-year { transition: letter-spacing 350ms var(--ease-quiet); }
+.timeline-progress {
+  position: absolute; left: 5px; top: 0; width: 2px;
+  background: var(--neon-pink);
+  box-shadow: 0 0 10px var(--neon-pink);
+  height: 0; transition: height 100ms linear;
+  z-index: 5;
+}
+
+.mobile-menu { transform: translateY(-110%); transition: transform 450ms var(--ease-quiet); }
+.mobile-menu.open { transform: translateY(0); }
+
+.glitch { transition: text-shadow 200ms var(--ease-quiet); }
+.glitch:hover { text-shadow: 1px 0 var(--neon-pink), -1px 0 var(--neon-blue); }
+
+.status-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--neon-green); display: inline-block;
+  box-shadow: 0 0 8px var(--neon-green);
+  animation: pulse 2.4s var(--ease-quiet) infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(0.85); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+</head>
+<body>
+
+<div id="cursor-dot"></div>
+
+<canvas id="particle-canvas"></canvas>
+<div class="grid-bg"></div>
+<div class="noise"></div>
+
+<!-- ═══════════════ NAVBAR ═══════════════ -->
+<nav class="fixed top-0 left-0 right-0 z-50 bg-void-black/80 backdrop-blur-md border-b border-white/5">
+  <div class="max-w-[1400px] mx-auto px-6 lg:px-12 py-4 flex items-center justify-between">
+    <a href="#home" class="font-mono font-bold text-sm tracking-wider glitch" data-cursor-hover>
+      MIFR<span class="text-neon-pink">.</span>
+    </a>
+    <div class="hidden lg:flex items-center gap-8 font-mono text-xs uppercase tracking-widest">
+      <a href="#home" class="nav-link active" data-cursor-hover>Home</a>
+      <a href="#about" class="nav-link" data-cursor-hover>About</a>
+      <a href="#experience" class="nav-link" data-cursor-hover>Experience</a>
+      <a href="#projects" class="nav-link" data-cursor-hover>Projects</a>
+      <a href="#skills" class="nav-link" data-cursor-hover>Skills</a>
+      <a href="#contact" class="nav-link" data-cursor-hover>Contact</a>
+    </div>
+    <div class="hidden lg:flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-white/40">
+      <span class="status-dot"></span>
+      <span>Available</span>
+    </div>
+    <button id="menu-btn" class="lg:hidden text-white" data-cursor-hover aria-label="Menu">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="3" y1="6" x2="21" y2="6"/>
+        <line x1="3" y1="12" x2="21" y2="12"/>
+        <line x1="3" y1="18" x2="21" y2="18"/>
+      </svg>
+    </button>
+  </div>
+  <div id="mobile-menu" class="mobile-menu lg:hidden bg-void-black/95 backdrop-blur-md border-t border-white/5">
+    <div class="px-6 py-6 flex flex-col gap-5 font-mono text-xs uppercase tracking-widest">
+      <a href="#home" class="nav-link">Home</a>
+      <a href="#about" class="nav-link">About</a>
+      <a href="#experience" class="nav-link">Experience</a>
+      <a href="#projects" class="nav-link">Projects</a>
+      <a href="#skills" class="nav-link">Skills</a>
+      <a href="#contact" class="nav-link">Contact</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════════════ HERO ═══════════════ -->
+<section id="home" class="relative min-h-screen flex items-center pt-28 pb-16 z-10">
+  <div class="max-w-[1400px] mx-auto px-6 lg:px-12 w-full">
+    <div class="grid lg:grid-cols-[1.1fr_1fr] gap-8 lg:gap-12 items-center">
+      <div class="order-2 lg:order-1">
+        <div class="eyebrow mb-6 reveal">
+          [Fikri] // SISTEM INFORMASI @ UNNES
+        </div>
+        <h1 id="hero-title" class="font-mono font-bold leading-[0.95] mb-8 scramble-glow" style="font-size: clamp(1.5rem, 4vw, 3.2rem);">
+          MUHAMMAD IKHSANUL FIKRI RAMADHAN
+        </h1>
+        <p class="text-white/70 text-base lg:text-lg max-w-md mb-10 leading-relaxed reveal">
+          Sistem Informasi student at Universitas Negeri Semarang.
+        </p>
+        <div class="flex flex-wrap gap-4 reveal">
+          <a href="#projects" class="btn-primary" data-cursor-hover>
+            View Projects <span>→</span>
+          </a>
+          <a href="#contact" class="btn-ghost" data-cursor-hover>
+            Contact ↗
+          </a>
+        </div>
+        <div class="mt-14 pt-8 border-t border-white/10 grid grid-cols-3 gap-4 font-mono text-xs reveal">
+          <div>
+            <div class="text-white/40 uppercase tracking-widest mb-1">Role</div>
+            <div class="text-white">Student</div>
+          </div>
+          <div>
+            <div class="text-white/40 uppercase tracking-widest mb-1">Based</div>
+            <div class="text-white">Semarang, ID</div>
+          </div>
+          <div>
+            <div class="text-white/40 uppercase tracking-widest mb-1">Focus</div>
+            <div class="text-white">Dev / ML</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="order-1 lg:order-2 relative h-[280px] sm:h-[400px] lg:h-[560px]">
+        <canvas id="hero-canvas"></canvas>
+        <div class="absolute top-0 right-0 font-mono text-[10px] uppercase tracking-widest text-white/30">
+          // 3D_OBJECT_01
+        </div>
+        <div class="absolute bottom-0 left-0 right-0 font-mono text-[10px] uppercase tracking-widest text-white/30 flex justify-between px-2">
+          <span>ROTATION: AUTO</span>
+          <span>PARALLAX: MOUSE</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="absolute bottom-6 left-1/2 -translate-x-1/2 font-mono text-[10px] uppercase tracking-widest text-white/30 flex flex-col items-center gap-2">
+    <span>Scroll</span>
+    <div class="w-px h-8 bg-white/20"></div>
+  </div>
+</section>
+
+<!-- ═══════════════ ABOUT ═══════════════ -->
+<section id="about" class="relative py-32 z-10">
+  <div class="max-w-[1400px] mx-auto px-6 lg:px-12">
+    <div class="eyebrow mb-4 reveal">// 01 — About</div>
+    <h2 class="font-sans font-extrabold mb-20 reveal" style="font-size: clamp(2rem, 4vw, 3.5rem);">
+      A brief introduction.
+    </h2>
+    <div class="grid lg:grid-cols-[0.85fr_1fr] gap-12 lg:gap-20 items-start">
+      <div class="reveal">
+        <!-- Profile photo — provided by user -->
+        <div class="frame p-2">
+          <img src="https://z-cdn-media.chatglm.cn/files/d196eae0-ab38-48c7-b6d4-4919c493c48c.jpg?auth_key=1890204305-59902e35a9c74e71a460e4548d29ef5f-0-83644765b55ef7dfe8c493ae2a77edd5" alt="Muhammad Ikhsanul Fikri Ramadhan" class="w-full h-auto block" style="aspect-ratio: 3/4; object-fit: cover; filter: contrast(1.05) saturate(1.05);">
+        </div>
+        <div class="font-mono text-[10px] uppercase tracking-widest text-white/40 mt-4 flex justify-between">
+          <span>SUBJECT_ID: MIFR_2025</span>
+          <span>SEMARANG.ID</span>
+        </div>
+      </div>
+      <div class="reveal">
+        <p class="text-white/85 text-lg lg:text-xl leading-relaxed mb-12">
+          I'm <span class="text-neon-pink font-mono">Muhammad Ikhsanul Fikri Ramadhan</span>, an undergraduate student in <span class="text-white font-medium">Sistem Informasi at Universitas Negeri Semarang</span>.
+        </p>
+        <div class="grid grid-cols-2 gap-6 font-mono text-xs">
+          <div>
+            <div class="text-white/40 uppercase tracking-widest mb-1">University</div>
+            <div class="text-white">Universitas Negeri Semarang</div>
+          </div>
+          <div>
+            <div class="text-white/40 uppercase tracking-widest mb-1">Major</div>
+            <div class="text-white">Sistem Informasi</div>
+          </div>
+          <div>
+            <div class="text-white/40 uppercase tracking-widest mb-1">Status</div>
+            <div class="text-white">Undergraduate</div>
+          </div>
+          <div>
+            <div class="text-white/40 uppercase tracking-widest mb-1">Focus</div>
+            <div class="text-white">Dev / Design / ML</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ EXPERIENCE ═══════════════ -->
+<section id="experience" class="relative py-32 z-10">
+  <div class="max-w-[1400px] mx-auto px-6 lg:px-12">
+    <div class="eyebrow mb-4 reveal">// 02 — Experience</div>
+    <h2 class="font-sans font-extrabold mb-20 reveal" style="font-size: clamp(2rem, 4vw, 3.5rem);">
+      Timeline so far.
+    </h2>
+    <div class="grid lg:grid-cols-[1fr_2fr] gap-12">
+      <div class="reveal">
+        <p class="text-white/70 leading-relaxed mb-4 max-w-sm">
+          A non-linear journey through coursework, communities, side projects, and shipping. Hover any node to highlight it.
+        </p>
+        <div class="font-mono text-xs uppercase tracking-widest text-white/40 mt-6">
+          2025 → Present
+        </div>
+      </div>
+      <div class="relative timeline-container">
+        <div class="absolute left-[5px] top-0 bottom-0 w-[2px] bg-white/10"></div>
+        <div class="timeline-progress"></div>
+
+        <div class="timeline-item reveal" data-cursor-hover>
+          <div class="timeline-dot"></div>
+          <div class="timeline-year font-mono text-xs text-neon-pink mb-2 tracking-widest">2025 — Present</div>
+          <h3 class="font-sans font-bold text-xl mb-2">BSc Sistem Informasi, UNNES</h3>
+          <p class="text-white/60 leading-relaxed text-sm max-w-xl">
+            Undergraduate program at Universitas Negeri Semarang. Coursework spanning systems analysis, databases, software engineering, and machine learning foundations.
+          </p>
+        </div>
+
+        <div class="timeline-item reveal" data-cursor-hover>
+          <div class="timeline-dot"></div>
+          <div class="timeline-year font-mono text-xs text-neon-pink mb-2 tracking-widest">2025</div>
+          <h3 class="font-sans font-bold text-xl mb-2">Maju On Hackathon — Participant</h3>
+          <p class="text-white/60 leading-relaxed text-sm max-w-xl">
+            Joined Maju On Hackathon, collaborating on a team to ship a working prototype under a tight deadline. Practiced rapid ideation, scoped MVP delivery, and pitched to judges.
+          </p>
+        </div>
+
+        <div class="timeline-item reveal" data-cursor-hover>
+          <div class="timeline-dot"></div>
+          <div class="timeline-year font-mono text-xs text-neon-pink mb-2 tracking-widest">2026</div>
+          <h3 class="font-sans font-bold text-xl mb-2">Finalist — BCC by Pegadaian</h3>
+          <p class="text-white/60 leading-relaxed text-sm max-w-xl">
+            Named a finalist in the Business Case Competition by Pegadaian. Analyzed a real business problem, proposed a data-informed solution, and presented to a panel of industry judges.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ PROJECTS ═══════════════ -->
+<section id="projects" class="relative py-32 z-10">
+  <div class="max-w-[1400px] mx-auto px-6 lg:px-12">
+    <div class="eyebrow mb-4 reveal">// 03 — Projects</div>
+    <h2 class="font-sans font-extrabold mb-20 reveal" style="font-size: clamp(2rem, 4vw, 3.5rem);">
+      Things I've built.
+    </h2>
+
+    <!-- Project card — no image, text-only spec card -->
+    <div class="reveal">
+      <div class="frame p-8 lg:p-12 max-w-4xl">
+        <div class="eyebrow mb-4">Project_01</div>
+        <h3 class="font-sans font-extrabold mb-6" style="font-size: clamp(1.75rem, 3vw, 2.75rem);">Kang Ojek</h3>
+        <p class="text-white/75 leading-relaxed mb-8 max-w-2xl">
+          Kang Ojek is an Android-based mobile game built with Unity that centers on the journey of a motorcycle taxi driver. Players ride a motorcycle, travel as far as possible, collect coins, and manage their fuel to ensure the journey doesn't end prematurely.
+        </p>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-10 font-mono text-xs">
+          <div>
+            <div class="text-white/40 uppercase tracking-widest mb-1">Stack</div>
+            <div class="text-white">Unity, C#</div>
+          </div>
+          <div>
+            <div class="text-white/40 uppercase tracking-widest mb-1">Platform</div>
+            <div class="text-white">Android</div>
+          </div>
+          <div>
+            <div class="text-white/40 uppercase tracking-widest mb-1">Genre</div>
+            <div class="text-white">Endless Runner</div>
+          </div>
+          <div>
+            <div class="text-white/40 uppercase tracking-widest mb-1">Year</div>
+            <div class="text-white">2025</div>
+          </div>
+        </div>
+        <a href="https://github.com/Muhfikr1/KangOjek" target="_blank" rel="noopener noreferrer" class="btn-primary" data-cursor-hover>
+          <iconify-icon icon="simple-icons:github" width="14"></iconify-icon>
+          View on GitHub ↗
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ SKILLS ═══════════════ -->
+<section id="skills" class="relative py-32 z-10">
+  <div class="max-w-[1400px] mx-auto px-6 lg:px-12">
+    <div class="eyebrow mb-4 reveal">// 04 — Skills</div>
+    <h2 class="font-sans font-extrabold mb-20 reveal" style="font-size: clamp(2rem, 4vw, 3.5rem);">
+      Stack &amp; tools.
+    </h2>
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3">
+      <div class="skill-card reveal" data-cursor-hover>
+        <iconify-icon icon="simple-icons:html5" width="36" height="36" class="text-white mb-4 block"></iconify-icon>
+        <div class="font-mono text-[10px] uppercase tracking-widest text-white/40 mb-1">Markup</div>
+        <div class="font-sans font-bold text-white">HTML</div>
+      </div>
+      <div class="skill-card reveal" data-cursor-hover>
+        <iconify-icon icon="simple-icons:css3" width="36" height="36" class="text-white mb-4 block"></iconify-icon>
+        <div class="font-mono text-[10px] uppercase tracking-widest text-white/40 mb-1">Styling</div>
+        <div class="font-sans font-bold text-white">CSS</div>
+      </div>
+      <div class="skill-card reveal" data-cursor-hover>
+        <iconify-icon icon="simple-icons:tailwindcss" width="36" height="36" class="text-white mb-4 block"></iconify-icon>
+        <div class="font-mono text-[10px] uppercase tracking-widest text-white/40 mb-1">Framework</div>
+        <div class="font-sans font-bold text-white">Tailwind CSS</div>
+      </div>
+      <div class="skill-card reveal" data-cursor-hover>
+        <iconify-icon icon="simple-icons:mysql" width="36" height="36" class="text-white mb-4 block"></iconify-icon>
+        <div class="font-mono text-[10px] uppercase tracking-widest text-white/40 mb-1">Database</div>
+        <div class="font-sans font-bold text-white">SQL</div>
+      </div>
+      <div class="skill-card reveal" data-cursor-hover>
+        <iconify-icon icon="simple-icons:github" width="36" height="36" class="text-white mb-4 block"></iconify-icon>
+        <div class="font-mono text-[10px] uppercase tracking-widest text-white/40 mb-1">Version</div>
+        <div class="font-sans font-bold text-white">Git/GitHub</div>
+      </div>
+      <div class="skill-card reveal" data-cursor-hover>
+        <iconify-icon icon="simple-icons:figma" width="36" height="36" class="text-white mb-4 block"></iconify-icon>
+        <div class="font-mono text-[10px] uppercase tracking-widest text-white/40 mb-1">Design</div>
+        <div class="font-sans font-bold text-white">Figma</div>
+      </div>
+      <div class="skill-card reveal" data-cursor-hover>
+        <iconify-icon icon="simple-icons:scikitlearn" width="36" height="36" class="text-white mb-4 block"></iconify-icon>
+        <div class="font-mono text-[10px] uppercase tracking-widest text-white/40 mb-1">AI / ML</div>
+        <div class="font-sans font-bold text-white">Machine Learning</div>
+      </div>
+      <div class="skill-card reveal" data-cursor-hover>
+        <iconify-icon icon="simple-icons:pandas" width="36" height="36" class="text-white mb-4 block"></iconify-icon>
+        <div class="font-mono text-[10px] uppercase tracking-widest text-white/40 mb-1">Data</div>
+        <div class="font-sans font-bold text-white">Data Analysis</div>
+      </div>
+      <div class="skill-card reveal" data-cursor-hover>
+        <iconify-icon icon="simple-icons:framer" width="36" height="36" class="text-white mb-4 block"></iconify-icon>
+        <div class="font-mono text-[10px] uppercase tracking-widest text-white/40 mb-1">Product</div>
+        <div class="font-sans font-bold text-white">UI/UX</div>
+      </div>
+      <div class="skill-card reveal" data-cursor-hover>
+        <iconify-icon icon="simple-icons:unity" width="36" height="36" class="text-white mb-4 block"></iconify-icon>
+        <div class="font-mono text-[10px] uppercase tracking-widest text-white/40 mb-1">Engine</div>
+        <div class="font-sans font-bold text-white">Unity</div>
+      </div>
+      <div class="skill-card reveal" data-cursor-hover>
+        <iconify-icon icon="simple-icons:dotnet" width="36" height="36" class="text-white mb-4 block"></iconify-icon>
+        <div class="font-mono text-[10px] uppercase tracking-widest text-white/40 mb-1">Language</div>
+        <div class="font-sans font-bold text-white">C#</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ CONTACT ═══════════════ -->
+<section id="contact" class="relative py-32 z-10">
+  <div class="max-w-[1400px] mx-auto px-6 lg:px-12">
+    <div class="eyebrow mb-4 reveal">// 05 — Contact</div>
+    <h2 class="font-sans font-extrabold mb-16 reveal" style="font-size: clamp(2.5rem, 6vw, 5rem);">
+      Let's build something.
+    </h2>
+    <div class="grid lg:grid-cols-2 gap-12 lg:gap-20 items-start">
+      <div class="reveal">
+        <p class="text-white/75 text-lg lg:text-xl leading-relaxed mb-10 max-w-md">
+          Open to collaboration on side projects, freelance dev/design work, internships, and conversations.
+        </p>
+        <div class="inline-flex items-center gap-3 font-mono text-xs uppercase tracking-widest text-neon-green">
+          <span class="status-dot"></span>
+          Available for collaboration
+        </div>
+      </div>
+      <div class="reveal space-y-4">
+        <a href="mailto:emailfikri1@gmail.com" class="frame p-6 flex items-center justify-between group" data-cursor-hover>
+          <div>
+            <div class="font-mono text-xs uppercase tracking-widest text-white/40 mb-1">Email</div>
+            <div class="font-sans font-bold text-white text-lg lg:text-xl">emailfikri1@gmail.com</div>
+          </div>
+          <span class="text-white/40 group-hover:text-neon-pink transition-colors text-2xl">↗</span>
+        </a>
+        <a href="https://github.com/Muhfikr1" target="_blank" rel="noopener noreferrer" class="frame p-6 flex items-center justify-between group" data-cursor-hover>
+          <div>
+            <div class="font-mono text-xs uppercase tracking-widest text-white/40 mb-1">GitHub</div>
+            <div class="font-sans font-bold text-white text-lg lg:text-xl">github.com/Muhfikr1</div>
+          </div>
+          <span class="text-white/40 group-hover:text-neon-pink transition-colors text-2xl">↗</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ FOOTER ═══════════════ -->
+<footer class="relative py-12 border-t border-white/5 z-10">
+  <div class="max-w-[1400px] mx-auto px-6 lg:px-12">
+    <div class="flex flex-col md:flex-row justify-between gap-6 font-mono text-xs uppercase tracking-widest text-white/40">
+      <div>© 2025 Muhammad Ikhsanul Fikri Ramadhan</div>
+      <div>Built with care in Semarang, ID</div>
+    </div>
+  </div>
+</footer>
+
+<!-- ═══════════════ SCRIPTS ═══════════════ -->
+<script type="module">
+import * as THREE from 'three';
+
+const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const isMobile = window.matchMedia('(max-width: 768px)').matches;
+
+const cursor = document.getElementById('cursor-dot');
+if (cursor && window.matchMedia('(pointer: fine)').matches) {
+  let cx = 0, cy = 0, tx = 0, ty = 0;
+  document.addEventListener('mousemove', e => { tx = e.clientX; ty = e.clientY; });
+  document.addEventListener('mouseover', e => {
+    const t = e.target;
+    const isHover = !!(t.closest && t.closest('a, button, [data-cursor-hover]'));
+    cursor.style.width  = isHover ? '40px' : '8px';
+    cursor.style.height = isHover ? '40px' : '8px';
+  });
+  (function loop() {
+    cx += (tx - cx) * 0.22;
+    cy += (ty - cy) * 0.22;
+    cursor.style.transform = `translate(${cx - 4}px, ${cy - 4}px)`;
+    requestAnimationFrame(loop);
+  })();
+}
+
+const particleCanvas = document.getElementById('particle-canvas');
+let pScene, pCam, pRenderer, pPoints1, pPoints2;
+let pActive = false;
+let pMouseX = 0, pMouseY = 0;
+
+window.addEventListener('mousemove', e => {
+  pMouseX = (e.clientX / window.innerWidth - 0.5) * 0.3;
+  pMouseY = (e.clientY / window.innerHeight - 0.5) * 0.3;
+});
+
+function initParticles() {
+  if (prefersReduced) return;
+  pScene = new THREE.Scene();
+  pCam = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 100);
+  pCam.position.z = 8;
+  pRenderer = new THREE.WebGLRenderer({ canvas: particleCanvas, alpha: true, antialias: true });
+  pRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  pRenderer.setSize(window.innerWidth, window.innerHeight);
+
+  const COUNT1 = isMobile ? 300 : 900;
+  const COUNT2 = isMobile ? 80 : 220;
+
+  function makePoints(count, color, spread) {
+    const positions = new Float32Array(count * 3);
+    const sizes     = new Float32Array(count);
+    const offsets   = new Float32Array(count);
+    for (let i = 0; i < count; i++) {
+      positions[i*3]   = (Math.random() - 0.5) * spread.x;
+      positions[i*3+1] = (Math.random() - 0.5) * spread.y;
+      positions[i*3+2] = (Math.random() - 0.5) * spread.z;
+      sizes[i]   = Math.random() * 1.4 + 0.3;
+      offsets[i] = Math.random() * Math.PI * 2;
+    }
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    geo.setAttribute('aSize',    new THREE.BufferAttribute(sizes, 1));
+    geo.setAttribute('aOffset',  new THREE.BufferAttribute(offsets, 1));
+    const mat = new THREE.ShaderMaterial({
+      uniforms: { uTime: { value: 0 }, uColor: { value: new THREE.Color(color) } },
+      vertexShader: `
+        attribute float aSize; attribute float aOffset; uniform float uTime; varying float vAlpha;
+        void main() {
+          vec3 p = position;
+          p.y += sin(uTime * 0.3 + aOffset) * 0.5;
+          p.x += cos(uTime * 0.25 + aOffset * 0.7) * 0.3;
+          vec4 mv = modelViewMatrix * vec4(p, 1.0);
+          gl_PointSize = aSize * (180.0 / -mv.z);
+          gl_Position = projectionMatrix * mv;
+          vAlpha = 0.55 + 0.45 * sin(uTime * 0.6 + aOffset);
+        }`,
+      fragmentShader: `
+        varying float vAlpha; uniform vec3 uColor;
+        void main() {
+          vec2 uv = gl_PointCoord - vec2(0.5);
+          float d = length(uv);
+          if (d > 0.5) discard;
+          gl_FragColor = vec4(uColor, smoothstep(0.5, 0.0, d) * vAlpha * 0.55);
+        }`,
+      transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+    });
+    return new THREE.Points(geo, mat);
+  }
+
+  pPoints1 = makePoints(COUNT1, 0xffffff, { x: 25, y: 18, z: 14 });
+  pPoints2 = makePoints(COUNT2, 0xff2d8f, { x: 22, y: 16, z: 12 });
+  pScene.add(pPoints1);
+  pScene.add(pPoints2);
+  pActive = true;
+  animateParticles();
+}
+
+let pClock = 0;
+function animateParticles() {
+  if (!pActive) return;
+  pClock += 0.01;
+  if (pPoints1 && pPoints1.material.uniforms) {
+    pPoints1.material.uniforms.uTime.value = pClock;
+    pPoints2.material.uniforms.uTime.value = pClock;
+    pScene.rotation.y += (pMouseX - pScene.rotation.y) * 0.04;
+    pScene.rotation.x += (pMouseY - pScene.rotation.x) * 0.04;
+  }
+  pRenderer.render(pScene, pCam);
+  requestAnimationFrame(animateParticles);
+}
+
+window.addEventListener('resize', () => {
+  if (!pRenderer) return;
+  pCam.aspect = window.innerWidth / window.innerHeight;
+  pCam.updateProjectionMatrix();
+  pRenderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+initParticles();
+
+const heroCanvas = document.getElementById('hero-canvas');
+let hScene, hCam, hRenderer, hTiltGroup, hSpinGroup, hInnerHead;
+let hRings = [], hSatellites = [], hEyeMat, hAntennaMat, hShell;
+let hActive = false;
+let hMouseX = 0, hMouseY = 0;
+let hTargetX = 0, hTargetY = 0;
+
+window.addEventListener('mousemove', e => {
+  hMouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+  hMouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+  hTargetX = -hMouseY * 0.15;
+  hTargetY =  hMouseX * 0.25;
+});
+
+function initHero() {
+  hScene = new THREE.Scene();
+  hCam = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+  hCam.position.set(0, 0, 6);
+
+  hRenderer = new THREE.WebGLRenderer({ canvas: heroCanvas, alpha: true, antialias: true });
+  hRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+  hTiltGroup = new THREE.Group();
+  hScene.add(hTiltGroup);
+  hSpinGroup = new THREE.Group();
+  hTiltGroup.add(hSpinGroup);
+
+  const HEAD = 1.4;
+
+  const head = new THREE.Mesh(
+    new THREE.BoxGeometry(HEAD, HEAD, HEAD),
+    new THREE.MeshBasicMaterial({ color: 0x0a0a0f, transparent: true, opacity: 0.88 })
+  );
+  hSpinGroup.add(head);
+
+  const headWire = new THREE.LineSegments(
+    new THREE.EdgesGeometry(new THREE.BoxGeometry(HEAD, HEAD, HEAD)),
+    new THREE.LineBasicMaterial({ color: 0xff2d8f, transparent: true, opacity: 0.95 })
+  );
+  hSpinGroup.add(headWire);
+
+  hInnerHead = new THREE.LineSegments(
+    new THREE.EdgesGeometry(new THREE.BoxGeometry(HEAD * 0.65, HEAD * 0.65, HEAD * 0.65)),
+    new THREE.LineBasicMaterial({ color: 0x00d4ff, transparent: true, opacity: 0.45 })
+  );
+  hInnerHead.rotation.y = Math.PI / 4;
+  hSpinGroup.add(hInnerHead);
+
+  hEyeMat = new THREE.MeshBasicMaterial({ color: 0xff2d8f, side: THREE.DoubleSide, transparent: true, opacity: 0.95 });
+  const eyeGeo = new THREE.PlaneGeometry(0.25, 0.25);
+  const eyeL = new THREE.Mesh(eyeGeo, hEyeMat);
+  eyeL.position.set(-0.35, 0.05, HEAD / 2 + 0.01);
+  hSpinGroup.add(eyeL);
+  const eyeR = new THREE.Mesh(eyeGeo, hEyeMat);
+  eyeR.position.set(0.35, 0.05, HEAD / 2 + 0.01);
+  hSpinGroup.add(eyeR);
+
+  const mouth = new THREE.Mesh(
+    new THREE.PlaneGeometry(0.6, 0.05),
+    new THREE.MeshBasicMaterial({ color: 0xff2d8f, side: THREE.DoubleSide })
+  );
+  mouth.position.set(0, -0.38, HEAD / 2 + 0.01);
+  hSpinGroup.add(mouth);
+
+  const antennaShaft = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.025, 0.025, 0.5, 8),
+    new THREE.MeshBasicMaterial({ color: 0xff2d8f })
+  );
+  antennaShaft.position.set(0, HEAD / 2 + 0.25, 0);
+  hSpinGroup.add(antennaShaft);
+
+  hAntennaMat = new THREE.MeshBasicMaterial({ color: 0xff2d8f, transparent: true, opacity: 0.9 });
+  const antennaTip = new THREE.Mesh(new THREE.SphereGeometry(0.09, 16, 16), hAntennaMat);
+  antennaTip.position.set(0, HEAD / 2 + 0.58, 0);
+  hSpinGroup.add(antennaTip);
+
+  const earGeo = new THREE.CylinderGeometry(0.13, 0.13, 0.3, 16);
+  const earMat = new THREE.MeshBasicMaterial({ color: 0x111118 });
+  const earL = new THREE.Mesh(earGeo, earMat);
+  earL.rotation.z = Math.PI / 2;
+  earL.position.set(-HEAD / 2 - 0.16, 0, 0);
+  hSpinGroup.add(earL);
+  const earR = new THREE.Mesh(earGeo, earMat);
+  earR.rotation.z = Math.PI / 2;
+  earR.position.set(HEAD / 2 + 0.16, 0, 0);
+  hSpinGroup.add(earR);
+
+  const earRingGeo = new THREE.TorusGeometry(0.14, 0.008, 8, 32);
+  const earRingMat = new THREE.MeshBasicMaterial({ color: 0xff2d8f, transparent: true, opacity: 0.8 });
+  const earRingL = new THREE.Mesh(earRingGeo, earRingMat);
+  earRingL.rotation.y = Math.PI / 2;
+  earRingL.position.set(-HEAD / 2 - 0.06, 0, 0);
+  hSpinGroup.add(earRingL);
+  const earRingR = new THREE.Mesh(earRingGeo, earRingMat);
+  earRingR.rotation.y = Math.PI / 2;
+  earRingR.position.set(HEAD / 2 + 0.06, 0, 0);
+  hSpinGroup.add(earRingR);
+
+  const halo1 = new THREE.Mesh(
+    new THREE.TorusGeometry(1.85, 0.018, 16, 100),
+    new THREE.MeshBasicMaterial({ color: 0xff2d8f, transparent: true, opacity: 0.75 })
+  );
+  halo1.rotation.x = Math.PI / 2;
+  hSpinGroup.add(halo1);
+
+  const halo2 = new THREE.Mesh(
+    new THREE.TorusGeometry(2.15, 0.015, 16, 100),
+    new THREE.MeshBasicMaterial({ color: 0x00d4ff, transparent: true, opacity: 0.4 })
+  );
+  halo2.rotation.x = Math.PI / 3;
+  halo2.rotation.z = Math.PI / 4;
+  hSpinGroup.add(halo2);
+
+  const halo3 = new THREE.Mesh(
+    new THREE.TorusGeometry(2.45, 0.012, 16, 100),
+    new THREE.MeshBasicMaterial({ color: 0xff2d8f, transparent: true, opacity: 0.25 })
+  );
+  halo3.rotation.x = Math.PI / 4;
+  hSpinGroup.add(halo3);
+
+  hRings = [halo1, halo2, halo3];
+
+  hShell = new THREE.LineSegments(
+    new THREE.EdgesGeometry(new THREE.OctahedronGeometry(2.7, 0)),
+    new THREE.LineBasicMaterial({ color: 0xff2d8f, transparent: true, opacity: 0.22 })
+  );
+  hSpinGroup.add(hShell);
+
+  for (let i = 0; i < 6; i++) {
+    const angle = (i / 6) * Math.PI * 2;
+    const cube = new THREE.Mesh(
+      new THREE.BoxGeometry(0.09, 0.09, 0.09),
+      new THREE.MeshBasicMaterial({ color: i % 2 === 0 ? 0xff2d8f : 0x00d4ff })
+    );
+    cube.userData.angle = angle;
+    cube.userData.radius = 2.6 + Math.random() * 0.4;
+    cube.userData.speed = 0.4 + Math.random() * 0.5;
+    cube.userData.yPhase = Math.random() * Math.PI * 2;
+    hSpinGroup.add(cube);
+    hSatellites.push(cube);
+  }
+
+  const glow = new THREE.PointLight(0xff2d8f, 1.2, 10);
+  glow.position.set(0, 0, 2);
+  hScene.add(glow);
+
+  resizeHero();
+
+  if (prefersReduced) {
+    hRenderer.render(hScene, hCam);
+  } else {
+    hActive = true;
+    animateHero();
+  }
+}
+
+function resizeHero() {
+  if (!hRenderer || !heroCanvas) return;
+  const parent = heroCanvas.parentElement;
+  const rect = parent.getBoundingClientRect();
+  if (rect.width === 0 || rect.height === 0) return;
+  hRenderer.setSize(rect.width, rect.height, false);
+  hCam.aspect = rect.width / rect.height;
+  hCam.updateProjectionMatrix();
+}
+
+let hTime = 0;
+function animateHero() {
+  if (!hActive) return;
+  hTime += 0.01;
+
+  hSpinGroup.rotation.y += 0.005;
+
+  hTiltGroup.rotation.x += (hTargetX - hTiltGroup.rotation.x) * 0.04;
+  hTiltGroup.rotation.y += (hTargetY - hTiltGroup.rotation.y) * 0.04;
+
+  if (hInnerHead) {
+    hInnerHead.rotation.y -= 0.012;
+    hInnerHead.rotation.x = Math.sin(hTime * 0.5) * 0.2;
+  }
+
+  hRings[0].rotation.z += 0.006;
+  hRings[1].rotation.y += 0.004;
+  hRings[2].rotation.x += 0.003;
+
+  if (hEyeMat) hEyeMat.opacity = 0.7 + Math.sin(hTime * 3) * 0.3;
+  if (hAntennaMat) hAntennaMat.opacity = 0.55 + Math.sin(hTime * 5) * 0.45;
+
+  hSatellites.forEach(s => {
+    s.userData.angle += 0.008 * s.userData.speed;
+    s.position.x = Math.cos(s.userData.angle) * s.userData.radius;
+    s.position.z = Math.sin(s.userData.angle) * s.userData.radius;
+    s.position.y = Math.sin(hTime + s.userData.yPhase) * 0.5;
+  });
+
+  if (hShell) hShell.rotation.y -= 0.002;
+
+  hRenderer.render(hScene, hCam);
+  requestAnimationFrame(animateHero);
+}
+
+const heroSection = document.getElementById('home');
+const heroObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting && !prefersReduced) {
+      if (!hActive) { hActive = true; animateHero(); }
+    } else {
+      hActive = false;
+    }
+  });
+}, { threshold: 0.05 });
+if (heroSection) heroObs.observe(heroSection);
+
+window.addEventListener('resize', resizeHero);
+initHero();
+
+const heroTitle = document.getElementById('hero-title');
+const TARGET = 'MUHAMMAD IKHSANUL FIKRI RAMADHAN';
+const CHARS = '!<>-_\\/[]{}—=+*^?#________01';
+let scrambleDone = false;
+
+function scrambleStart() {
+  if (scrambleDone || prefersReduced) {
+    heroTitle.textContent = TARGET;
+    return;
+  }
+  scrambleDone = true;
+  let iter = 0;
+  const max = TARGET.length * 4;
+  (function tick() {
+    heroTitle.textContent = TARGET.split('').map((ch, i) => {
+      if (ch === ' ') return ' ';
+      if (i < iter / 4) return TARGET[i];
+      return CHARS[Math.floor(Math.random() * CHARS.length)];
+    }).join('');
+    iter += 1;
+    if (iter >= max) { heroTitle.textContent = TARGET; return; }
+    setTimeout(tick, 25);
+  })();
+}
+setTimeout(scrambleStart, 600);
+
+const revealEls = document.querySelectorAll('.reveal');
+const revealObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('is-in');
+      revealObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.12 });
+revealEls.forEach(el => revealObs.observe(el));
+
+const navLinks = document.querySelectorAll('.nav-link');
+const sections = document.querySelectorAll('section[id]');
+const navObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const id = e.target.id;
+      navLinks.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + id));
+    }
+  });
+}, { threshold: 0.35, rootMargin: '-80px 0px -40% 0px' });
+sections.forEach(s => navObs.observe(s));
+
+const menuBtn = document.getElementById('menu-btn');
+const mobileMenu = document.getElementById('mobile-menu');
+menuBtn?.addEventListener('click', () => mobileMenu.classList.toggle('open'));
+mobileMenu?.querySelectorAll('a').forEach(a => {
+  a.addEventListener('click', () => mobileMenu.classList.remove('open'));
+});
+
+const tlContainer = document.querySelector('.timeline-container');
+const tlProgress = document.querySelector('.timeline-progress');
+function updateTimeline() {
+  if (!tlContainer || !tlProgress) return;
+  const rect = tlContainer.getBoundingClientRect();
+  const winH = window.innerHeight;
+  const progress = Math.max(0, Math.min(1, (winH * 0.5 - rect.top) / rect.height));
+  tlProgress.style.height = (progress * 100) + '%';
+}
+window.addEventListener('scroll', updateTimeline, { passive: true });
+window.addEventListener('resize', updateTimeline);
+updateTimeline();
+
+let lenis = null;
+if (!prefersReduced && typeof Lenis !== 'undefined') {
+  lenis = new Lenis({
+    duration: 1.1,
+    easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+    smoothWheel: true,
+  });
+  function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+  requestAnimationFrame(raf);
+
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) {
+        e.preventDefault();
+        lenis.scrollTo(target, { offset: -80 });
+      }
+    });
+  });
+}
+</script>
+</body>
+</html>
