@@ -199,6 +199,192 @@ body, a, button { cursor: none; }
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Keep the fixed canvas and long portfolio copy inside the viewport. */
+img, canvas { max-width: 100%; }
+h1, h2, h3, p, a, span, div { overflow-wrap: anywhere; }
+
+@media (max-width: 1023px) {
+  nav { z-index: 50; }
+  section { scroll-margin-top: 5rem; }
+
+  .mobile-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    max-height: calc(100dvh - 4.5rem);
+    overflow-y: auto;
+    z-index: 40;
+  }
+
+  .hero-meta {
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 767px) {
+  nav > div:first-child,
+  .max-w-\[1400px\] {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+
+  .mobile-menu .px-6 {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+
+  #home {
+    min-height: auto;
+    padding-top: 7rem;
+    padding-bottom: 5rem;
+  }
+
+  #home .grid {
+    gap: 2rem;
+  }
+
+  #hero-title {
+    font-size: clamp(1.45rem, 8.5vw, 2.4rem) !important;
+    line-height: 1.05;
+    margin-bottom: 1.5rem;
+  }
+
+  #home .eyebrow {
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    margin-bottom: 1rem;
+  }
+
+  #home .order-1 {
+    height: min(72vw, 20rem);
+    min-height: 15rem;
+  }
+
+  #home .order-1 > div:last-child {
+    font-size: 0.55rem;
+    letter-spacing: 0.08em;
+  }
+
+  #home .flex.flex-wrap {
+    gap: 0.75rem;
+  }
+
+  .btn-primary,
+  .btn-ghost {
+    justify-content: center;
+    min-height: 3rem;
+    padding: 0.8rem 1rem;
+    font-size: 0.68rem;
+  }
+
+  #home .mt-14 {
+    margin-top: 2.5rem;
+  }
+
+  #home .mt-14 > div {
+    min-width: 0;
+  }
+
+  #home .mt-14 .tracking-widest {
+    letter-spacing: 0.08em;
+  }
+
+  #home .absolute.bottom-6 {
+    display: none;
+  }
+
+  #about, #experience, #projects, #skills, #contact {
+    padding-top: 5rem;
+    padding-bottom: 5rem;
+  }
+
+  #about h2, #experience h2, #projects h2, #skills h2 {
+    margin-bottom: 2.5rem;
+  }
+
+  #about .grid.grid-cols-2 {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .timeline-item {
+    padding-left: 2rem;
+    padding-bottom: 2.5rem;
+  }
+
+  .timeline-item h3 {
+    font-size: 1.1rem;
+  }
+
+  #projects .frame {
+    padding: 1.25rem;
+  }
+
+  #projects .grid.grid-cols-2 {
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  #skills .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .skill-card {
+    padding: 1rem;
+  }
+
+  .skill-card iconify-icon {
+    width: 28px;
+    height: 28px;
+    margin-bottom: 0.75rem;
+  }
+
+  #contact h2 {
+    font-size: clamp(2.25rem, 12vw, 3.5rem) !important;
+    margin-bottom: 2.5rem;
+  }
+
+  #contact .frame {
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  #contact .frame .text-lg {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 479px) {
+  #home .mt-14 {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  #home .mt-14 > div {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+
+  #home .mt-14 > div div:last-child {
+    text-align: right;
+  }
+
+  #projects .grid.grid-cols-2 {
+    grid-template-columns: 1fr;
+  }
+
+  #contact .frame {
+    align-items: flex-start;
+  }
+
+  #contact .frame > span {
+    flex: 0 0 auto;
+  }
+}
 </style>
 </head>
 <body>
@@ -357,11 +543,8 @@ body, a, button { cursor: none; }
     </h2>
     <div class="grid lg:grid-cols-[1fr_2fr] gap-12">
       <div class="reveal">
-        <p class="text-white/70 leading-relaxed mb-4 max-w-sm">
-          A non-linear journey through coursework, communities, side projects, and shipping. Hover any node to highlight it.
-        </p>
         <div class="font-mono text-xs uppercase tracking-widest text-white/40 mt-6">
-          2025 → Present
+          2024 → Present
         </div>
       </div>
       <div class="relative timeline-container">
@@ -370,7 +553,7 @@ body, a, button { cursor: none; }
 
         <div class="timeline-item reveal" data-cursor-hover>
           <div class="timeline-dot"></div>
-          <div class="timeline-year font-mono text-xs text-neon-pink mb-2 tracking-widest">2025 — Present</div>
+          <div class="timeline-year font-mono text-xs text-neon-pink mb-2 tracking-widest">2024 — Present</div>
           <h3 class="font-sans font-bold text-xl mb-2">BSc Sistem Informasi, UNNES</h3>
           <p class="text-white/60 leading-relaxed text-sm max-w-xl">
             Undergraduate program at Universitas Negeri Semarang. Coursework spanning systems analysis, databases, software engineering, and machine learning foundations.
@@ -550,8 +733,7 @@ body, a, button { cursor: none; }
 <footer class="relative py-12 border-t border-white/5 z-10">
   <div class="max-w-[1400px] mx-auto px-6 lg:px-12">
     <div class="flex flex-col md:flex-row justify-between gap-6 font-mono text-xs uppercase tracking-widest text-white/40">
-      <div>© 2025 Muhammad Ikhsanul Fikri Ramadhan</div>
-      <div>Built with care in Semarang, ID</div>
+      <div>Lets GO!</div>
     </div>
   </div>
 </footer>
